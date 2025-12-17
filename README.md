@@ -1,54 +1,96 @@
+<div align="center">
 
+<!-- Replace with your own banner/logo path -->
+<img src="banner.svg" alt="Jason's Journey Logo">
 
-# Jason's Journey
+*A Roguelike Adventure Through Procedurally Generated Towers — Built with Pygame*
 
-[Youtube Video Demo](https://www.youtube.com/watch?v=pitanN35QZ0&t=714s&ab_channel=MatheusMaldaner)
+<!-- Badges (edit links as needed) -->
+[![Platform](https://img.shields.io/badge/platform-Pygame-blue)](https://www.pygame.org/)
+![Python](https://img.shields.io/badge/python-3.x-orange)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-## Overview
-"Jason's Journey" is a captivating roguelike game developed in Pygame. This project is the Capstone Project for the MAD2502 class at the University of Florida. The game revolves around the character Jason Jarrington, who embarks on an adventurous quest through the procedurally generated levels of Century Tower. His mission is to solve the Ultimate Equation and unlock all knowledge in the universe.
+</div>
 
-## Installation
+---
 
-### Prerequisites
-Before running the game, ensure you have Python installed on your system. Additionally, the game requires the following main Python modules:
-- PyWFC
-- PyGame
+### 📹 Watch the Demo
 
-### Installing Modules
-If you don't have these modules installed, you can install them using pip. Open your terminal or command prompt and run the following commands:
+We developed this project as the **Capstone Project for MAD2502** at the University of Florida in 2023.
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s" target="_blank">
+    <img
+      src="https://img.youtube.com/vi/pitanN35QZ0/maxresdefault.jpg"
+      alt="Watch the demo video"
+      width="600"
+      style="border-radius: 8px;"
+    />
+  </a>
+
+  <br><br>
+
+  <a href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s" target="_blank">
+    <img
+      src="https://img.shields.io/badge/%20Watch%20Demo%20Video-red?logo=youtube"
+      alt="Watch on YouTube"
+    />
+  </a>
+</div>
+
+---
+
+### 🎮 Overview
+
+**Jason's Journey** is a roguelike game built in **Pygame** where you play as our professor **Jason Jarrington** (we got his support), exploring the procedurally generated levels of **Century Tower**.  
+Your mission: battle enemies, conquer boss fights, and solve the **Ultimate Equation** to unlock all knowledge in the universe.
+
+## Quick Start
+
+You only need to install dependencies and run the game:
+
+### (1) 🧰 Install Dependencies
+
+Make sure you have:
+
+- **Python 3.10**
+- **pip**
+
+Then install the required packages:
 
 ```bash
 pip install pywfc
 pip install pygame
 ```
 
-## Running the Game
+### (2) ▶️ Run the Game
 
-1. Clone the repository or download the source code from [GitHub](https://github.com/matheusmaldaner/JasonJourney).
-2. Navigate to the directory where you have saved the game.
-3. Run `main.py` using Python. This can typically be done by executing the following command in your terminal or command prompt:
+Clone the repository and start the game with:
 
-   ```bash
-   python main.py
-   ```
+```bash
+git clone https://github.com/matheusmaldaner/JasonJourney.git
+cd JasonJourney
+python main.py
+```
 
-   Alternatively, if you have multiple versions of Python installed, you might need to use `python3`:
+If you have multiple Python versions installed, you may need:
 
-   ```bash
-   python3 main.py
-   ```
+```bash
+python3 main.py
+```
 
-## Game Features
+## 🧩 Tech Stack
 
-- Hand-crafted levels with unique challenges.
-- Engaging storyline inspired by a passion for mathematics.
-- Various enemies and items to interact with.
-- Boss fights and intriguing lore.
+| Component     | Technology |
+| ------------- | ---------- |
+| 🎮 Game Engine | Pygame     |
+| 🧠 Language    | Python     |
+| 🧱 Generation  | PyWFC (Wave Function Collapse) |
 
-## Contributing
+## 👥 Authors
 
-We welcome contributions to "Jason's Journey"! If you have ideas for improvements or encounter any issues, please feel free to contribute to the repository or report issues.
+- Matheus Kunzler Maldaner — [GitHub](https://github.com/matheusmaldaner)  
+- Kyle Weiner — [GitHub](https://github.com/kylwein)  
+- Gabi Sprague — [GitHub](https://github.com/gabriellasprague)  
+- Victoria Manzato — [GitHub](https://github.com/victoriamanzato)  
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
