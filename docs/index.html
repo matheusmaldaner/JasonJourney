@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jason's Journey</title>
+<meta name="description" content="A roguelike dungeon crawler built with Pygame, developed as the Capstone Project for MAD2502 at the University of Florida.">
+<style>
+  :root {
+    --bg-primary: #f5f5f7;
+    --bg-secondary: #ffffff;
+    --text-primary: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --text-muted: #86868b;
+    --border: rgba(0, 0, 0, 0.08);
+    --border-hover: rgba(0, 0, 0, 0.15);
+    --accent: #10b981;
+    --accent-hover: #059669;
+    --accent-glow: rgba(16, 185, 129, 0.2);
+    --accent-dim: rgba(16, 185, 129, 0.12);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --transition: 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    --transition-fast: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #000000;
+      --bg-secondary: #0d0d0d;
+      --text-primary: #fafafa;
+      --text-secondary: #a3a3a3;
+      --text-muted: #737373;
+      --border: #262626;
+      --border-hover: #404040;
+      --accent: #34d399;
+      --accent-hover: #10b981;
+      --accent-glow: rgba(52, 211, 153, 0.3);
+      --accent-dim: rgba(52, 211, 153, 0.15);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  /* header */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+  .nav-title {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-title img {
+    width: 22px;
+    height: auto;
+    image-rendering: pixelated;
+  }
+  .nav-links { display: flex; gap: 20px; }
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color var(--transition-fast);
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* hero */
+  .hero { padding: 72px 0 48px; text-align: center; }
+  .hero-banner {
+    max-width: 640px;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    background: #ffffff;
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    letter-spacing: -0.03em;
+    margin-top: 32px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p.tagline {
+    margin: 14px auto 0;
+    max-width: 620px;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 26px;
+  }
+  .chip {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-glow);
+  }
+  .hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+  }
+  .btn svg { width: 18px; height: 18px; fill: currentColor; }
+  .btn-primary {
+    background: var(--accent);
+    color: #ffffff;
+    box-shadow: 0 4px 16px var(--accent-glow);
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+  }
+  .btn-glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-glass:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-1px);
+  }
+
+  /* sections */
+  section { padding: 48px 0; }
+  .section-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-size: 1.7rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 18px;
+  }
+  .prose { max-width: 720px; color: var(--text-secondary); }
+  .prose p + p { margin-top: 14px; }
+  .prose strong { color: var(--text-primary); font-weight: 600; }
+
+  /* glass card */
+  .card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    padding: 26px;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-hover);
+  }
+  .card h3 {
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .card p { color: var(--text-secondary); font-size: 0.92rem; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
+  }
+
+  /* gallery */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+  }
+  figure.shot {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    background: var(--bg-secondary);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+  figure.shot:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+  figure.shot img {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 1792 / 1024;
+    object-fit: cover;
+  }
+  figure.shot figcaption {
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  /* sprite strip */
+  .sprite-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 34px;
+    padding: 34px 26px;
+  }
+  .sprite {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .sprite img {
+    image-rendering: pixelated;
+    height: 72px;
+    width: auto;
+  }
+  .sprite img.small { height: 48px; }
+  .sprite span {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* jason idle animation: four stacked frames faded in turn */
+  .jason-anim {
+    position: relative;
+    width: 51px;
+    height: 84px;
+  }
+  .jason-anim img {
+    position: absolute;
+    inset: 0;
+    height: 84px;
+    width: auto;
+    image-rendering: pixelated;
+    opacity: 0;
+    animation: idle-cycle 0.8s steps(1) infinite;
+  }
+  .jason-anim img:nth-child(2) { animation-delay: 0.2s; }
+  .jason-anim img:nth-child(3) { animation-delay: 0.4s; }
+  .jason-anim img:nth-child(4) { animation-delay: 0.6s; }
+  @keyframes idle-cycle {
+    0% { opacity: 1; }
+    25% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  /* team */
+  .team-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+  }
+  .team-list a {
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+  .team-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+  }
+  .team-card svg { width: 20px; height: 20px; fill: var(--text-muted); flex-shrink: 0; transition: fill var(--transition-fast); }
+  .team-card:hover svg { fill: var(--accent); }
+  .team-card span { font-size: 0.92rem; font-weight: 500; }
+
+  /* video */
+  .video-wrap {
+    max-width: 720px;
+  }
+  .video-thumb {
+    position: relative;
+    display: block;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+  }
+  .video-thumb img { width: 100%; display: block; }
+  .video-thumb .play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.25);
+    transition: background var(--transition-fast);
+  }
+  .video-thumb:hover .play { background: rgba(0, 0, 0, 0.1); }
+  .play-badge {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg);
+  }
+  .play-badge svg { width: 26px; height: 26px; fill: #1d1d1f; margin-left: 4px; }
+
+  /* code block */
+  .code {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    overflow-x: auto;
+    line-height: 1.8;
+  }
+  .code .c { color: var(--text-muted); }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 36px 0 48px;
+    margin-top: 32px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--text-secondary); text-decoration: none; transition: color var(--transition-fast); }
+  footer a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="nav">
+    <div class="nav-title">
+      <img src="assets/sprites/jason_idle_0.png" alt="">
+      Jason's Journey
+    </div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#demo">Demo</a>
+      <a href="#team">Team</a>
+      <a href="https://github.com/matheusmaldaner/JasonJourney">GitHub</a>
+    </div>
+  </nav>
+</header>
+
+<main class="container">
+
+  <section class="hero">
+    <img class="hero-banner" src="assets/banner.svg" alt="Jason's Journey banner">
+    <h1>A roguelike climb up Century Tower</h1>
+    <p class="tagline">A dungeon crawler built with Pygame, inspired by professor Jason Harrington's love for mathematics and developed with his support as the Capstone Project for MAD2502 at the University of Florida.</p>
+    <div class="chips">
+      <span class="chip">Python</span>
+      <span class="chip">Pygame</span>
+      <span class="chip">PyWFC</span>
+      <span class="chip">Game Development</span>
+      <span class="chip">MAD2502 · 2023</span>
+    </div>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://github.com/matheusmaldaner/JasonJourney">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        View on GitHub
+      </a>
+      <a class="btn btn-glass" href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        Watch the demo
+      </a>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="section-label">About</div>
+    <h2>The Ultimate Equation awaits</h2>
+    <div class="prose">
+      <p><strong>Jason's Journey</strong> is a roguelike game built in Pygame where you play as professor Jason Harrington, exploring the procedurally generated levels of Century Tower. Your mission: battle enemies, conquer boss fights, and solve the <strong>Ultimate Equation</strong> to unlock all knowledge in the universe.</p>
+      <p>The project was developed in 2023 as the Capstone Project for MAD2502 (Computational Mathematics) at the University of Florida, with professor Harrington's support. Level layouts are generated with <strong>PyWFC</strong>, a wave function collapse library, so every climb through the tower is different.</p>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="section-label">Features</div>
+    <h2>What is inside the tower</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Procedural levels</h3>
+        <p>Tower floors are generated with wave function collapse via PyWFC, layered on top of handcrafted CSV tile maps.</p>
+      </div>
+      <div class="card">
+        <h3>Combat and bosses</h3>
+        <p>Fight goblins, imps, skeletons, and zombies with an arsenal ranging from a bow to lightsabers, and take on boss fights.</p>
+      </div>
+      <div class="card">
+        <h3>Story cutscenes</h3>
+        <p>Illustrated cutscenes carry the story of a professor's quest for the Ultimate Equation across the UF campus.</p>
+      </div>
+      <div class="card">
+        <h3>Pixel art and audio</h3>
+        <p>Animated sprite characters, retro fonts, and sound effects for coins, arrows, and healing round out the experience.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">Cast</div>
+    <h2>Sprites from the game</h2>
+    <div class="card sprite-strip">
+      <div class="sprite">
+        <div class="jason-anim">
+          <img src="assets/sprites/jason_idle_0.png" alt="Jason idle animation frame">
+          <img src="assets/sprites/jason_idle_1.png" alt="">
+          <img src="assets/sprites/jason_idle_2.png" alt="">
+          <img src="assets/sprites/jason_idle_3.png" alt="">
+        </div>
+        <span>Jason</span>
+      </div>
+      <div class="sprite"><img src="assets/sprites/big_demon_0.png" alt="Big demon sprite"><span>Big demon</span></div>
+      <div class="sprite"><img class="small" src="assets/sprites/skeleton_0.png" alt="Skeleton sprite"><span>Skeleton</span></div>
+      <div class="sprite"><img class="small" src="assets/sprites/tiny_zombie_0.png" alt="Tiny zombie sprite"><span>Tiny zombie</span></div>
+      <div class="sprite"><img class="small" src="assets/sprites/bow.png" alt="Bow sprite"><span>Bow</span></div>
+      <div class="sprite"><img class="small" src="assets/sprites/red_lightsaber.png" alt="Red lightsaber sprite"><span>Lightsaber</span></div>
+      <div class="sprite"><img class="small" src="assets/sprites/banana.png" alt="Banana sprite"><span>Banana</span></div>
+      <div class="sprite"><img class="small" src="assets/sprites/potion_red.png" alt="Red potion sprite"><span>Potion</span></div>
+      <div class="sprite"><img class="small" src="assets/sprites/heart_full.png" alt="Heart sprite"><span>Heart</span></div>
+      <div class="sprite"><img class="small" src="assets/sprites/coin_f0.png" alt="Coin sprite"><span>Coin</span></div>
+    </div>
+  </section>
+
+  <section id="gallery">
+    <div class="section-label">Gallery</div>
+    <h2>Cutscene art</h2>
+    <div class="gallery">
+      <figure class="shot">
+        <img src="assets/game_intro.jpg" alt="Game intro cutscene art" loading="lazy">
+        <figcaption>The journey begins</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/uf_scenery.jpg" alt="UF campus scenery cutscene art" loading="lazy">
+        <figcaption>The University of Florida campus</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/facing_tower.jpg" alt="Facing Century Tower cutscene art" loading="lazy">
+        <figcaption>Facing Century Tower</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/at_desk.jpg" alt="Professor at desk cutscene art" loading="lazy">
+        <figcaption>At the professor's desk</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/reaching_power.jpg" alt="Reaching power cutscene art" loading="lazy">
+        <figcaption>Reaching for the Ultimate Equation</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/the_end.jpg" alt="Ending cutscene art" loading="lazy">
+        <figcaption>The end of the climb</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="demo">
+    <div class="section-label">Demo</div>
+    <h2>Watch it in action</h2>
+    <div class="video-wrap">
+      <a class="video-thumb" href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s" aria-label="Watch the demo video on YouTube">
+        <img src="https://img.youtube.com/vi/pitanN35QZ0/maxresdefault.jpg" alt="Demo video thumbnail" loading="lazy">
+        <span class="play"><span class="play-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></span>
+      </a>
+    </div>
+  </section>
+
+  <section id="run">
+    <div class="section-label">Run it</div>
+    <h2>Play locally</h2>
+    <div class="prose" style="margin-bottom: 16px;">
+      <p>The game runs on Python 3.10 with Pygame. Install the dependencies, clone the repository, and start the game.</p>
+    </div>
+    <div class="code">
+      <span class="c"># install dependencies</span><br>
+      pip install pywfc pygame<br>
+      <span class="c"># clone and run</span><br>
+      git clone https://github.com/matheusmaldaner/JasonJourney.git<br>
+      cd JasonJourney<br>
+      python main.py
+    </div>
+  </section>
+
+  <section id="team">
+    <div class="section-label">Team</div>
+    <h2>Built by</h2>
+    <div class="team-list">
+      <a href="https://github.com/matheusmaldaner"><div class="card team-card"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>Matheus Kunzler Maldaner</span></div></a>
+      <a href="https://github.com/kylwein"><div class="card team-card"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>Kyle Weiner</span></div></a>
+      <a href="https://github.com/gabriellasprague"><div class="card team-card"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>Gabi Sprague</span></div></a>
+      <a href="https://github.com/victoriamanzato"><div class="card team-card"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>Victoria Manzato</span></div></a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <p>MIT License · <a href="https://github.com/matheusmaldaner/JasonJourney">github.com/matheusmaldaner/JasonJourney</a> · <a href="https://matheus.wiki">matheus.wiki</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
