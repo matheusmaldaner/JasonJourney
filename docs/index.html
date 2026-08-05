@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jason's Journey</title>
+<script>
+  // apply saved theme before first paint
+  (function () {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+  })();
+</script>
 <meta name="description" content="A roguelike dungeon crawler built with Pygame, developed as the Capstone Project for MAD2502 at the University of Florida.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,7 +40,7 @@
     --font-mono: 'SF Mono', 'Fira Code', Consolas, monospace;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
       --color-bg: #111114;
       --color-surface: #1c1c20;
       --color-text: #e8e8ec;
@@ -50,6 +57,23 @@
       --canvas-floor: #57534a;
       --canvas-open: #232320;
     }
+  }
+  :root[data-theme="dark"] {
+    --color-bg: #111114;
+    --color-surface: #1c1c20;
+    --color-text: #e8e8ec;
+    --color-text-muted: #b4b4b8;
+    --color-border: #333338;
+    --color-primary: #10b981;
+    --color-primary-hover: #34d39e;
+    --color-bg-alt: #18181c;
+    --color-secondary-depth: #000000;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 8px rgba(0,0,0,0.5);
+    --canvas-wall: #0e0e0d;
+    --canvas-edge: #33322d;
+    --canvas-floor: #57534a;
+    --canvas-open: #232320;
   }
 
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -109,17 +133,26 @@
     transition: color var(--transition);
   }
   .nav-links a:hover { color: var(--color-text); }
+  .nav-links { margin-left: auto; }
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color var(--transition), color var(--transition);
+  }
+  .theme-toggle:hover { border-color: var(--color-text-muted); }
+  .theme-toggle svg { width: 16px; height: 16px; }
 
   /* hero */
   .hero { padding: 80px 0 72px; }
-  .section-label {
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--color-primary);
-    margin-bottom: 14px;
-  }
   .hero h1 {
     font-size: clamp(2.2rem, 5vw, 3.2rem);
     line-height: 1.1;
@@ -450,13 +483,16 @@
       <a href="#team">Team</a>
       <a href="https://github.com/matheusmaldaner/JasonJourney">GitHub</a>
     </div>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="toggle theme">
+      <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
   </nav>
 </header>
 
 <main class="container">
 
   <section class="hero">
-    <div class="section-label">Roguelike / Pygame / MAD2502 Capstone</div>
     <h1>A roguelike climb up Century Tower</h1>
     <p class="tagline">A dungeon crawler built with Pygame, inspired by professor Jason Harrington's love for mathematics and developed with his support as the Capstone Project for MAD2502 at the University of Florida.</p>
     <div class="meta-row">
@@ -482,7 +518,7 @@
   </section>
 
   <section id="about">
-    <div class="section-head"><div class="section-label">About</div><h2>The Ultimate Equation awaits</h2></div>
+    <div class="section-head"><h2>The Ultimate Equation awaits</h2></div>
     <div class="prose">
       <p><strong>Jason's Journey</strong> is a roguelike game built in Pygame where you play as professor Jason Harrington, exploring the procedurally generated levels of Century Tower. Your mission: battle enemies, conquer boss fights, and solve the <strong>Ultimate Equation</strong> to unlock all knowledge in the universe.</p>
       <p>The project was developed in 2023 as the Capstone Project for MAD2502 (Computational Mathematics) at the University of Florida, with professor Harrington's support. Level layouts are generated with <strong>PyWFC</strong>, a wave function collapse library, so every climb through the tower is different.</p>
@@ -490,7 +526,7 @@
   </section>
 
   <section id="wfc">
-    <div class="section-head"><div class="section-label">Interactive demo</div><h2>Try the level generator</h2></div>
+    <div class="section-head"><h2>Try the level generator</h2></div>
     <div class="prose" style="margin-bottom: 22px;">
       <p>The game's tower floors are laid out with wave function collapse: every tile starts as a superposition of possibilities, and the map "collapses" one lowest-entropy tile at a time while constraints propagate to its neighbors. This is an interactive demo of the technique, a simplified in-browser cousin of the PyWFC pipeline used in the game.</p>
     </div>
@@ -514,7 +550,7 @@
   </section>
 
   <section id="features">
-    <div class="section-head"><div class="section-label">Features</div><h2>What is inside the tower</h2></div>
+    <div class="section-head"><h2>What is inside the tower</h2></div>
     <div class="feature-grid">
       <div class="feature-card card">
         <h3>Procedural levels</h3>
@@ -536,7 +572,7 @@
   </section>
 
   <section>
-    <div class="section-head"><div class="section-label">Pixel art</div><h2>Sprites from the game</h2></div>
+    <div class="section-head"><h2>Sprites from the game</h2></div>
     <div class="sprite-strip card">
       <div class="sprite">
         <div class="jason-anim">
@@ -560,7 +596,7 @@
   </section>
 
   <section id="gallery">
-    <div class="section-head"><div class="section-label">Gallery</div><h2>Cutscene art</h2></div>
+    <div class="section-head"><h2>Cutscene art</h2></div>
     <div class="gallery">
       <figure class="shot card">
         <img src="assets/game_intro.jpg" alt="Game intro cutscene art" loading="lazy">
@@ -590,7 +626,7 @@
   </section>
 
   <section id="demo">
-    <div class="section-head"><div class="section-label">Video</div><h2>Watch it in action</h2></div>
+    <div class="section-head"><h2>Watch it in action</h2></div>
     <a class="video-thumb card" href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s" aria-label="Watch the demo video on YouTube">
       <img src="https://img.youtube.com/vi/pitanN35QZ0/maxresdefault.jpg" alt="Demo video thumbnail" loading="lazy">
       <span class="play"><span class="play-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></span>
@@ -598,7 +634,7 @@
   </section>
 
   <section id="run">
-    <div class="section-head"><div class="section-label">Quick start</div><h2>Play locally</h2></div>
+    <div class="section-head"><h2>Play locally</h2></div>
     <div class="prose" style="margin-bottom: 18px;">
       <p>The game runs on Python 3.10 with Pygame. Install the dependencies, clone the repository, and start the game.</p>
     </div>
@@ -613,7 +649,7 @@
   </section>
 
   <section id="team">
-    <div class="section-head"><div class="section-label">Team</div><h2>Built by</h2></div>
+    <div class="section-head"><h2>Built by</h2></div>
     <div class="team-list">
       <a class="card" href="https://github.com/matheusmaldaner"><span>Matheus Kunzler Maldaner</span><span class="gh">@matheusmaldaner</span></a>
       <a class="card" href="https://github.com/kylwein"><span>Kyle Weiner</span><span class="gh">@kylwein</span></a>
@@ -845,8 +881,35 @@
   });
 
   var mq = window.matchMedia("(prefers-color-scheme: dark)");
-  if (mq.addEventListener) mq.addEventListener("change", function () { loadPalette(); drawAll(); });
+  if (mq.addEventListener) mq.addEventListener("change", function () { loadPalette(); drawAll(); updateThemeIcon(); });
 
+  // theme toggle
+  var themeBtn = document.getElementById("theme-toggle");
+  var sunIcon = document.getElementById("theme-icon-sun");
+  var moonIcon = document.getElementById("theme-icon-moon");
+
+  function effectiveTheme() {
+    var t = document.documentElement.dataset.theme;
+    if (t === "dark" || t === "light") return t;
+    return mq.matches ? "dark" : "light";
+  }
+
+  function updateThemeIcon() {
+    var dark = effectiveTheme() === "dark";
+    sunIcon.style.display = dark ? "block" : "none";
+    moonIcon.style.display = dark ? "none" : "block";
+  }
+
+  themeBtn.addEventListener("click", function () {
+    var next = effectiveTheme() === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem("theme", next);
+    updateThemeIcon();
+    loadPalette();
+    drawAll();
+  });
+
+  updateThemeIcon();
   loadPalette();
   reset();
 })();
