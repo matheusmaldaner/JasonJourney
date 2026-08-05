@@ -7,47 +7,38 @@
 <meta name="description" content="A roguelike dungeon crawler built with Pygame, developed as the Capstone Project for MAD2502 at the University of Florida.">
 <style>
   :root {
-    --bg-primary: #f5f5f7;
-    --bg-secondary: #ffffff;
-    --text-primary: #1d1d1f;
-    --text-secondary: #6e6e73;
-    --text-muted: #86868b;
-    --border: rgba(0, 0, 0, 0.08);
-    --border-hover: rgba(0, 0, 0, 0.15);
-    --accent: #10b981;
-    --accent-hover: #059669;
-    --accent-glow: rgba(16, 185, 129, 0.2);
-    --accent-dim: rgba(16, 185, 129, 0.12);
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.5);
-    --transition: 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-    --transition-fast: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    --bg: #faf9f7;
+    --bg-alt: #ffffff;
+    --bg-inset: #f1efec;
+    --ink: #1a1a18;
+    --ink-2: #55524c;
+    --ink-3: #8a867e;
+    --line: #e0ddd7;
+    --line-strong: #c9c5bd;
+    --accent: #1f6f43;
+    --accent-ink: #ffffff;
+    --canvas-wall: #262622;
+    --canvas-edge: #4d4a42;
+    --canvas-floor: #dcd7cd;
+    --canvas-open: #efece6;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg-primary: #000000;
-      --bg-secondary: #0d0d0d;
-      --text-primary: #fafafa;
-      --text-secondary: #a3a3a3;
-      --text-muted: #737373;
-      --border: #262626;
-      --border-hover: #404040;
-      --accent: #34d399;
-      --accent-hover: #10b981;
-      --accent-glow: rgba(52, 211, 153, 0.3);
-      --accent-dim: rgba(52, 211, 153, 0.15);
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-      --glass-bg: rgba(255, 255, 255, 0.05);
-      --glass-border: rgba(255, 255, 255, 0.1);
+      --bg: #131311;
+      --bg-alt: #1a1a18;
+      --bg-inset: #202020;
+      --ink: #ecebe7;
+      --ink-2: #a8a49c;
+      --ink-3: #767268;
+      --line: #2b2b28;
+      --line-strong: #3d3c38;
+      --accent: #4fae78;
+      --accent-ink: #10130f;
+      --canvas-wall: #0e0e0d;
+      --canvas-edge: #33322d;
+      --canvas-floor: #57534a;
+      --canvas-open: #232320;
     }
   }
 
@@ -56,201 +47,247 @@
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    line-height: 1.6;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
 
-  .container { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  a { color: var(--accent); }
 
   /* header */
   header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: var(--glass-bg);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
   }
   .nav {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
-    padding: 16px 24px;
-    max-width: 1040px;
+    flex-wrap: wrap;
+    gap: 10px 24px;
+    padding: 20px 24px;
+    max-width: 960px;
     margin: 0 auto;
   }
   .nav-title {
+    font-family: var(--mono);
+    font-size: 0.9rem;
     font-weight: 700;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     display: flex;
     align-items: center;
     gap: 10px;
   }
-  .nav-title img {
-    width: 22px;
-    height: auto;
-    image-rendering: pixelated;
-  }
-  .nav-links { display: flex; gap: 20px; }
+  .nav-title img { width: 18px; height: auto; image-rendering: pixelated; align-self: center; }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 20px; }
   .nav-links a {
-    color: var(--text-secondary);
+    color: var(--ink-2);
     text-decoration: none;
-    font-size: 0.9rem;
-    transition: color var(--transition-fast);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.15s ease;
   }
   .nav-links a:hover { color: var(--accent); }
 
   /* hero */
-  .hero { padding: 72px 0 48px; text-align: center; }
-  .hero-banner {
-    max-width: 640px;
-    width: 100%;
-    height: auto;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    background: #ffffff;
+  .hero { padding: 88px 0 64px; border-bottom: 1px solid var(--line); }
+  .hero-kicker {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 22px;
   }
   .hero h1 {
-    font-size: clamp(2.2rem, 5vw, 3.2rem);
-    letter-spacing: -0.03em;
-    margin-top: 32px;
-    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    font-weight: 750;
+    max-width: 15ch;
   }
   .hero p.tagline {
-    margin: 14px auto 0;
-    max-width: 620px;
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-  }
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
     margin-top: 26px;
+    max-width: 58ch;
+    color: var(--ink-2);
+    font-size: 1.08rem;
   }
-  .chip {
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--accent);
-    background: var(--accent-dim);
-    border: 1px solid var(--accent-glow);
-  }
-  .hero-actions {
+  .meta-row {
     display: flex;
-    justify-content: center;
-    gap: 14px;
-    margin-top: 32px;
     flex-wrap: wrap;
+    gap: 0;
+    margin-top: 36px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
   }
+  .meta-item {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+    padding: 10px 18px 10px 0;
+    margin-right: 18px;
+    border-right: 1px solid var(--line);
+  }
+  .meta-item:last-child { border-right: none; margin-right: 0; }
+  .hero-actions { display: flex; gap: 12px; margin-top: 36px; flex-wrap: wrap; }
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 22px;
-    border-radius: var(--radius-md);
+    gap: 9px;
+    padding: 11px 20px;
+    border-radius: 4px;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    cursor: pointer;
   }
-  .btn svg { width: 18px; height: 18px; fill: currentColor; }
-  .btn-primary {
-    background: var(--accent);
-    color: #ffffff;
-    box-shadow: 0 4px 16px var(--accent-glow);
+  .btn svg { width: 16px; height: 16px; fill: currentColor; }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-outline {
+    background: transparent;
+    border-color: var(--line-strong);
+    color: var(--ink);
   }
-  .btn-primary:hover {
-    background: var(--accent-hover);
-    transform: translateY(-1px);
-  }
-  .btn-glass {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    color: var(--text-primary);
-    box-shadow: var(--shadow-sm);
-  }
-  .btn-glass:hover {
-    border-color: var(--border-hover);
-    transform: translateY(-1px);
-  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
 
   /* sections */
-  section { padding: 48px 0; }
-  .section-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 8px;
+  section { padding: 64px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: none; }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
   }
   h2 {
-    font-size: 1.7rem;
+    font-size: 1.65rem;
     letter-spacing: -0.02em;
-    margin-bottom: 18px;
+    font-weight: 700;
   }
-  .prose { max-width: 720px; color: var(--text-secondary); }
+  .prose { max-width: 66ch; color: var(--ink-2); }
   .prose p + p { margin-top: 14px; }
-  .prose strong { color: var(--text-primary); font-weight: 600; }
+  .prose strong { color: var(--ink); font-weight: 600; }
 
-  /* glass card */
-  .card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-sm);
-    padding: 26px;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  /* banner figure */
+  .banner-fig {
+    margin-top: 44px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    background: #ffffff;
+    max-width: 620px;
   }
-  .card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--border-hover);
-  }
-  .card h3 {
-    font-size: 1.05rem;
-    margin-bottom: 8px;
-    letter-spacing: -0.01em;
-  }
-  .card p { color: var(--text-secondary); font-size: 0.92rem; }
+  .banner-fig img { display: block; width: 100%; height: auto; }
 
-  .grid {
+  /* feature table */
+  .feature-list { border-top: 1px solid var(--line); }
+  .feature-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 18px;
+    grid-template-columns: 200px 1fr;
+    gap: 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .feature-row h3 { font-size: 0.95rem; font-weight: 650; letter-spacing: -0.01em; }
+  .feature-row p { color: var(--ink-2); font-size: 0.95rem; }
+  @media (max-width: 620px) {
+    .feature-row { grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  /* wfc demo */
+  .wfc-panel {
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    background: var(--bg-alt);
+    overflow: hidden;
+  }
+  .wfc-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px 22px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .wfc-toolbar label {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .wfc-toolbar input[type="range"] { accent-color: var(--accent); width: 130px; }
+  .wfc-status {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  #wfc-canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--canvas-open);
+    cursor: crosshair;
+    image-rendering: pixelated;
+  }
+  .wfc-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 24px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+  }
+  .wfc-legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .swatch {
+    width: 12px; height: 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    display: inline-block;
+  }
+  .wfc-note {
+    margin-top: 14px;
+    font-size: 0.88rem;
+    color: var(--ink-3);
+    max-width: 70ch;
   }
 
   /* gallery */
   .gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
   }
   figure.shot {
-    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
     overflow: hidden;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
-    background: var(--bg-secondary);
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  }
-  figure.shot:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
+    background: var(--bg-alt);
   }
   figure.shot img {
     width: 100%;
@@ -260,9 +297,12 @@
     object-fit: cover;
   }
   figure.shot figcaption {
-    padding: 12px 16px;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+    border-top: 1px solid var(--line);
   }
 
   /* sprite strip */
@@ -270,34 +310,26 @@
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
-    justify-content: center;
-    gap: 34px;
-    padding: 34px 26px;
+    justify-content: space-between;
+    gap: 28px;
+    padding: 34px 28px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--bg-inset);
   }
-  .sprite {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-  .sprite img {
-    image-rendering: pixelated;
-    height: 72px;
-    width: auto;
-  }
+  .sprite { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .sprite img { image-rendering: pixelated; height: 72px; width: auto; }
   .sprite img.small { height: 48px; }
   .sprite span {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    letter-spacing: 0.04em;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
   /* jason idle animation: four stacked frames faded in turn */
-  .jason-anim {
-    position: relative;
-    width: 51px;
-    height: 84px;
-  }
+  .jason-anim { position: relative; width: 51px; height: 84px; }
   .jason-anim img {
     position: absolute;
     inset: 0;
@@ -316,37 +348,14 @@
     100% { opacity: 0; }
   }
 
-  /* team */
-  .team-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 14px;
-  }
-  .team-list a {
-    text-decoration: none;
-    color: var(--text-primary);
-  }
-  .team-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 18px;
-  }
-  .team-card svg { width: 20px; height: 20px; fill: var(--text-muted); flex-shrink: 0; transition: fill var(--transition-fast); }
-  .team-card:hover svg { fill: var(--accent); }
-  .team-card span { font-size: 0.92rem; font-weight: 500; }
-
   /* video */
-  .video-wrap {
-    max-width: 720px;
-  }
   .video-thumb {
     position: relative;
     display: block;
-    border-radius: var(--radius-lg);
+    max-width: 680px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
     overflow: hidden;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-md);
   }
   .video-thumb img { width: 100%; display: block; }
   .video-thumb .play {
@@ -355,46 +364,71 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.25);
-    transition: background var(--transition-fast);
   }
-  .video-thumb:hover .play { background: rgba(0, 0, 0, 0.1); }
   .play-badge {
-    width: 68px;
-    height: 68px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    background: var(--accent);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--shadow-lg);
+    transition: filter 0.15s ease;
   }
-  .play-badge svg { width: 26px; height: 26px; fill: #1d1d1f; margin-left: 4px; }
+  .video-thumb:hover .play-badge { filter: brightness(1.1); }
+  .play-badge svg { width: 24px; height: 24px; fill: var(--accent-ink); margin-left: 3px; }
 
   /* code block */
   .code {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    background: var(--bg-inset);
+    border: 1px solid var(--line);
+    border-radius: 6px;
     padding: 18px 20px;
-    font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--mono);
     font-size: 0.85rem;
-    color: var(--text-primary);
+    color: var(--ink);
     overflow-x: auto;
-    line-height: 1.8;
+    line-height: 1.9;
+    max-width: 680px;
   }
-  .code .c { color: var(--text-muted); }
+  .code .c { color: var(--ink-3); }
+
+  /* team */
+  .team-list {
+    border-top: 1px solid var(--line);
+    max-width: 560px;
+  }
+  .team-list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 4px;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 0.95rem;
+    font-weight: 550;
+    transition: color 0.15s ease;
+  }
+  .team-list a:hover { color: var(--accent); }
+  .team-list a .gh {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-3);
+    letter-spacing: 0.03em;
+  }
+  .team-list a:hover .gh { color: var(--accent); }
 
   footer {
-    border-top: 1px solid var(--border);
-    padding: 36px 0 48px;
-    margin-top: 32px;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 0.85rem;
+    border-top: 1px solid var(--line);
+    padding: 36px 0 52px;
+    color: var(--ink-3);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
   }
-  footer a { color: var(--text-secondary); text-decoration: none; transition: color var(--transition-fast); }
+  footer a { color: var(--ink-2); text-decoration: none; }
   footer a:hover { color: var(--accent); }
 </style>
 </head>
@@ -408,6 +442,7 @@
     </div>
     <div class="nav-links">
       <a href="#about">About</a>
+      <a href="#wfc">Generator</a>
       <a href="#gallery">Gallery</a>
       <a href="#demo">Demo</a>
       <a href="#team">Team</a>
@@ -419,54 +454,79 @@
 <main class="container">
 
   <section class="hero">
-    <img class="hero-banner" src="assets/banner.svg" alt="Jason's Journey banner">
+    <div class="hero-kicker">Roguelike / Pygame / MAD2502 Capstone</div>
     <h1>A roguelike climb up Century Tower</h1>
     <p class="tagline">A dungeon crawler built with Pygame, inspired by professor Jason Harrington's love for mathematics and developed with his support as the Capstone Project for MAD2502 at the University of Florida.</p>
-    <div class="chips">
-      <span class="chip">Python</span>
-      <span class="chip">Pygame</span>
-      <span class="chip">PyWFC</span>
-      <span class="chip">Game Development</span>
-      <span class="chip">MAD2502 · 2023</span>
+    <div class="meta-row">
+      <span class="meta-item">Python</span>
+      <span class="meta-item">Pygame</span>
+      <span class="meta-item">PyWFC</span>
+      <span class="meta-item">Game development</span>
+      <span class="meta-item">MAD2502 / 2023</span>
     </div>
     <div class="hero-actions">
       <a class="btn btn-primary" href="https://github.com/matheusmaldaner/JasonJourney">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
         View on GitHub
       </a>
-      <a class="btn btn-glass" href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s">
+      <a class="btn btn-outline" href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
         Watch the demo
       </a>
     </div>
+    <figure class="banner-fig">
+      <img src="assets/banner.svg" alt="Jason's Journey banner">
+    </figure>
   </section>
 
   <section id="about">
-    <div class="section-label">About</div>
-    <h2>The Ultimate Equation awaits</h2>
+    <div class="section-head"><span class="section-num">01</span><h2>The Ultimate Equation awaits</h2></div>
     <div class="prose">
       <p><strong>Jason's Journey</strong> is a roguelike game built in Pygame where you play as professor Jason Harrington, exploring the procedurally generated levels of Century Tower. Your mission: battle enemies, conquer boss fights, and solve the <strong>Ultimate Equation</strong> to unlock all knowledge in the universe.</p>
       <p>The project was developed in 2023 as the Capstone Project for MAD2502 (Computational Mathematics) at the University of Florida, with professor Harrington's support. Level layouts are generated with <strong>PyWFC</strong>, a wave function collapse library, so every climb through the tower is different.</p>
     </div>
   </section>
 
+  <section id="wfc">
+    <div class="section-head"><span class="section-num">02</span><h2>Try the level generator</h2></div>
+    <div class="prose" style="margin-bottom: 22px;">
+      <p>The game's tower floors are laid out with wave function collapse: every tile starts as a superposition of possibilities, and the map "collapses" one lowest-entropy tile at a time while constraints propagate to its neighbors. This is an interactive demo of the technique, a simplified in-browser cousin of the PyWFC pipeline used in the game.</p>
+    </div>
+    <div class="wfc-panel">
+      <div class="wfc-toolbar">
+        <button class="btn btn-primary" id="wfc-generate" type="button">Generate</button>
+        <label for="wfc-speed">Speed
+          <input type="range" id="wfc-speed" min="1" max="60" value="14">
+        </label>
+        <span class="wfc-status" id="wfc-status">idle</span>
+      </div>
+      <canvas id="wfc-canvas" width="960" height="540" aria-label="Wave function collapse dungeon map demo"></canvas>
+      <div class="wfc-legend">
+        <span><span class="swatch" id="sw-wall"></span>wall</span>
+        <span><span class="swatch" id="sw-edge"></span>corridor</span>
+        <span><span class="swatch" id="sw-floor"></span>room floor</span>
+        <span><span class="swatch" id="sw-open"></span>uncollapsed</span>
+      </div>
+    </div>
+    <p class="wfc-note">Click anywhere on the map to seed a room-floor tile at that spot; the constraint propagation carves the rest of the dungeon around your seeds. Demo of the technique only, not the game's actual tile set or ruleset.</p>
+  </section>
+
   <section id="features">
-    <div class="section-label">Features</div>
-    <h2>What is inside the tower</h2>
-    <div class="grid">
-      <div class="card">
+    <div class="section-head"><span class="section-num">03</span><h2>What is inside the tower</h2></div>
+    <div class="feature-list">
+      <div class="feature-row">
         <h3>Procedural levels</h3>
         <p>Tower floors are generated with wave function collapse via PyWFC, layered on top of handcrafted CSV tile maps.</p>
       </div>
-      <div class="card">
+      <div class="feature-row">
         <h3>Combat and bosses</h3>
         <p>Fight goblins, imps, skeletons, and zombies with an arsenal ranging from a bow to lightsabers, and take on boss fights.</p>
       </div>
-      <div class="card">
+      <div class="feature-row">
         <h3>Story cutscenes</h3>
         <p>Illustrated cutscenes carry the story of a professor's quest for the Ultimate Equation across the UF campus.</p>
       </div>
-      <div class="card">
+      <div class="feature-row">
         <h3>Pixel art and audio</h3>
         <p>Animated sprite characters, retro fonts, and sound effects for coins, arrows, and healing round out the experience.</p>
       </div>
@@ -474,9 +534,8 @@
   </section>
 
   <section>
-    <div class="section-label">Cast</div>
-    <h2>Sprites from the game</h2>
-    <div class="card sprite-strip">
+    <div class="section-head"><span class="section-num">04</span><h2>Sprites from the game</h2></div>
+    <div class="sprite-strip">
       <div class="sprite">
         <div class="jason-anim">
           <img src="assets/sprites/jason_idle_0.png" alt="Jason idle animation frame">
@@ -499,8 +558,7 @@
   </section>
 
   <section id="gallery">
-    <div class="section-label">Gallery</div>
-    <h2>Cutscene art</h2>
+    <div class="section-head"><span class="section-num">05</span><h2>Cutscene art</h2></div>
     <div class="gallery">
       <figure class="shot">
         <img src="assets/game_intro.jpg" alt="Game intro cutscene art" loading="lazy">
@@ -530,20 +588,16 @@
   </section>
 
   <section id="demo">
-    <div class="section-label">Demo</div>
-    <h2>Watch it in action</h2>
-    <div class="video-wrap">
-      <a class="video-thumb" href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s" aria-label="Watch the demo video on YouTube">
-        <img src="https://img.youtube.com/vi/pitanN35QZ0/maxresdefault.jpg" alt="Demo video thumbnail" loading="lazy">
-        <span class="play"><span class="play-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></span>
-      </a>
-    </div>
+    <div class="section-head"><span class="section-num">06</span><h2>Watch it in action</h2></div>
+    <a class="video-thumb" href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s" aria-label="Watch the demo video on YouTube">
+      <img src="https://img.youtube.com/vi/pitanN35QZ0/maxresdefault.jpg" alt="Demo video thumbnail" loading="lazy">
+      <span class="play"><span class="play-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></span>
+    </a>
   </section>
 
   <section id="run">
-    <div class="section-label">Run it</div>
-    <h2>Play locally</h2>
-    <div class="prose" style="margin-bottom: 16px;">
+    <div class="section-head"><span class="section-num">07</span><h2>Play locally</h2></div>
+    <div class="prose" style="margin-bottom: 18px;">
       <p>The game runs on Python 3.10 with Pygame. Install the dependencies, clone the repository, and start the game.</p>
     </div>
     <div class="code">
@@ -557,13 +611,12 @@
   </section>
 
   <section id="team">
-    <div class="section-label">Team</div>
-    <h2>Built by</h2>
+    <div class="section-head"><span class="section-num">08</span><h2>Built by</h2></div>
     <div class="team-list">
-      <a href="https://github.com/matheusmaldaner"><div class="card team-card"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>Matheus Kunzler Maldaner</span></div></a>
-      <a href="https://github.com/kylwein"><div class="card team-card"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>Kyle Weiner</span></div></a>
-      <a href="https://github.com/gabriellasprague"><div class="card team-card"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>Gabi Sprague</span></div></a>
-      <a href="https://github.com/victoriamanzato"><div class="card team-card"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>Victoria Manzato</span></div></a>
+      <a href="https://github.com/matheusmaldaner"><span>Matheus Kunzler Maldaner</span><span class="gh">@matheusmaldaner</span></a>
+      <a href="https://github.com/kylwein"><span>Kyle Weiner</span><span class="gh">@kylwein</span></a>
+      <a href="https://github.com/gabriellasprague"><span>Gabi Sprague</span><span class="gh">@gabriellasprague</span></a>
+      <a href="https://github.com/victoriamanzato"><span>Victoria Manzato</span><span class="gh">@victoriamanzato</span></a>
     </div>
   </section>
 
@@ -574,6 +627,228 @@
     <p>MIT License · <a href="https://github.com/matheusmaldaner/JasonJourney">github.com/matheusmaldaner/JasonJourney</a> · <a href="https://matheus.wiki">matheus.wiki</a></p>
   </div>
 </footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // simplified wave function collapse over three tile types
+  // WALL (solid rock), EDGE (corridor ring), FLOOR (room interior)
+  // adjacency: wall-wall, wall-edge, edge-edge, edge-floor, floor-floor
+  // floor never touches wall directly, which forces corridor rings around rooms
+
+  var WALL = 0, EDGE = 1, FLOOR = 2;
+  var ALL = 7; // bitmask of all three
+  var WEIGHTS = [4, 1.4, 2.6];
+  var COMPAT = [];
+  COMPAT[WALL] = (1 << WALL) | (1 << EDGE);
+  COMPAT[EDGE] = (1 << WALL) | (1 << EDGE) | (1 << FLOOR);
+  COMPAT[FLOOR] = (1 << EDGE) | (1 << FLOOR);
+
+  var COLS = 64, ROWS = 36;
+  var canvas = document.getElementById("wfc-canvas");
+  var ctx = canvas.getContext("2d");
+  var statusEl = document.getElementById("wfc-status");
+  var speedEl = document.getElementById("wfc-speed");
+  var genBtn = document.getElementById("wfc-generate");
+
+  var cellW = canvas.width / COLS;
+  var cellH = canvas.height / ROWS;
+
+  var cells, collapsed, remaining, running = false, rafId = null;
+
+  function cssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  var palette = {};
+  function loadPalette() {
+    palette = {
+      open: cssVar("--canvas-open"),
+      colors: [cssVar("--canvas-wall"), cssVar("--canvas-edge"), cssVar("--canvas-floor")],
+      accent: cssVar("--accent")
+    };
+    document.getElementById("sw-wall").style.background = palette.colors[WALL];
+    document.getElementById("sw-edge").style.background = palette.colors[EDGE];
+    document.getElementById("sw-floor").style.background = palette.colors[FLOOR];
+    document.getElementById("sw-open").style.background = palette.open;
+  }
+
+  function reset() {
+    cells = new Array(COLS * ROWS).fill(ALL);
+    collapsed = new Array(COLS * ROWS).fill(false);
+    remaining = COLS * ROWS;
+    drawAll();
+    setStatus("ready");
+  }
+
+  function setStatus(t) { statusEl.textContent = t; }
+
+  function optionCount(mask) {
+    var n = 0;
+    for (var t = 0; t < 3; t++) if (mask & (1 << t)) n++;
+    return n;
+  }
+
+  function drawCell(i) {
+    var x = (i % COLS) * cellW;
+    var y = Math.floor(i / COLS) * cellH;
+    if (collapsed[i]) {
+      var t = 31 - Math.clz32(cells[i]); // single bit set
+      ctx.fillStyle = palette.colors[t];
+      ctx.fillRect(x, y, cellW + 0.5, cellH + 0.5);
+      // subtle inset on room floors so rooms read as tiled
+      if (t === FLOOR) {
+        ctx.fillStyle = palette.open;
+        ctx.fillRect(x + cellW - 1, y, 1, cellH);
+        ctx.fillRect(x, y + cellH - 1, cellW, 1);
+      }
+    } else {
+      ctx.fillStyle = palette.open;
+      ctx.fillRect(x, y, cellW + 0.5, cellH + 0.5);
+      // dot whose size hints at remaining entropy
+      var n = optionCount(cells[i]);
+      var r = n === 3 ? 1 : n === 2 ? 2 : 3;
+      ctx.fillStyle = palette.accent;
+      ctx.fillRect(x + cellW / 2 - r / 2, y + cellH / 2 - r / 2, r, r);
+    }
+  }
+
+  function drawAll() {
+    ctx.fillStyle = palette.open;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < cells.length; i++) drawCell(i);
+  }
+
+  // constraint propagation from a queue of changed cells
+  function propagate(queue) {
+    var dirty = [];
+    while (queue.length) {
+      var i = queue.pop();
+      var cx = i % COLS, cy = Math.floor(i / COLS);
+      var neighbors = [];
+      if (cx > 0) neighbors.push(i - 1);
+      if (cx < COLS - 1) neighbors.push(i + 1);
+      if (cy > 0) neighbors.push(i - COLS);
+      if (cy < ROWS - 1) neighbors.push(i + COLS);
+      // union of tiles compatible with any option still allowed here
+      var allowed = 0;
+      for (var t = 0; t < 3; t++) if (cells[i] & (1 << t)) allowed |= COMPAT[t];
+      for (var k = 0; k < neighbors.length; k++) {
+        var j = neighbors[k];
+        var next = cells[j] & allowed;
+        if (next !== cells[j]) {
+          cells[j] = next;
+          dirty.push(j);
+          if (next === 0) return { contradiction: true, dirty: dirty };
+          queue.push(j);
+        }
+      }
+    }
+    return { contradiction: false, dirty: dirty };
+  }
+
+  function pickLowestEntropy() {
+    var best = -1, bestN = 4;
+    var candidates = [];
+    for (var i = 0; i < cells.length; i++) {
+      if (collapsed[i]) continue;
+      var n = optionCount(cells[i]);
+      if (n < bestN) { bestN = n; candidates = [i]; }
+      else if (n === bestN) candidates.push(i);
+    }
+    if (!candidates.length) return -1;
+    best = candidates[(Math.random() * candidates.length) | 0];
+    return best;
+  }
+
+  function weightedPick(mask) {
+    var total = 0, t;
+    for (t = 0; t < 3; t++) if (mask & (1 << t)) total += WEIGHTS[t];
+    var r = Math.random() * total;
+    for (t = 0; t < 3; t++) {
+      if (!(mask & (1 << t))) continue;
+      r -= WEIGHTS[t];
+      if (r <= 0) return t;
+    }
+    return t - 1;
+  }
+
+  // collapse a single cell, returns list of cells to redraw, or null on contradiction
+  function collapseOne(forceIndex, forceTile) {
+    var i = forceIndex !== undefined ? forceIndex : pickLowestEntropy();
+    if (i < 0) return [];
+    var t = forceTile !== undefined && (cells[i] & (1 << forceTile)) ? forceTile : weightedPick(cells[i]);
+    cells[i] = 1 << t;
+    collapsed[i] = true;
+    remaining--;
+    var res = propagate([i]);
+    if (res.contradiction) return null;
+    res.dirty.push(i);
+    return res.dirty;
+  }
+
+  function step() {
+    if (!running) return;
+    var perFrame = parseInt(speedEl.value, 10);
+    for (var s = 0; s < perFrame; s++) {
+      if (remaining <= 0) break;
+      var dirty = collapseOne();
+      if (dirty === null) {
+        // contradiction: restart quietly with a fresh grid
+        setStatus("contradiction, restarting");
+        cells = new Array(COLS * ROWS).fill(ALL);
+        collapsed = new Array(COLS * ROWS).fill(false);
+        remaining = COLS * ROWS;
+        drawAll();
+        rafId = requestAnimationFrame(step);
+        return;
+      }
+      for (var d = 0; d < dirty.length; d++) drawCell(dirty[d]);
+    }
+    if (remaining <= 0) {
+      running = false;
+      setStatus("collapsed " + COLS * ROWS + " tiles");
+      genBtn.textContent = "Generate";
+      return;
+    }
+    setStatus(remaining + " tiles left");
+    rafId = requestAnimationFrame(step);
+  }
+
+  function start(fresh) {
+    if (rafId) cancelAnimationFrame(rafId);
+    if (fresh) reset();
+    running = true;
+    genBtn.textContent = "Restart";
+    rafId = requestAnimationFrame(step);
+  }
+
+  genBtn.addEventListener("click", function () { start(true); });
+
+  canvas.addEventListener("click", function (e) {
+    var rect = canvas.getBoundingClientRect();
+    var cx = Math.floor((e.clientX - rect.left) / rect.width * COLS);
+    var cy = Math.floor((e.clientY - rect.top) / rect.height * ROWS);
+    cx = Math.max(0, Math.min(COLS - 1, cx));
+    cy = Math.max(0, Math.min(ROWS - 1, cy));
+    var i = cy * COLS + cx;
+    if (remaining <= 0) reset();
+    if (collapsed[i]) return;
+    var dirty = collapseOne(i, FLOOR);
+    if (dirty === null) { reset(); return; }
+    for (var d = 0; d < dirty.length; d++) drawCell(dirty[d]);
+    setStatus("seeded room floor at " + cx + "," + cy);
+    if (!running) start(false);
+  });
+
+  var mq = window.matchMedia("(prefers-color-scheme: dark)");
+  if (mq.addEventListener) mq.addEventListener("change", function () { loadPalette(); drawAll(); });
+
+  loadPalette();
+  reset();
+})();
+</script>
 
 </body>
 </html>
