@@ -5,36 +5,46 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jason's Journey</title>
 <meta name="description" content="A roguelike dungeon crawler built with Pygame, developed as the Capstone Project for MAD2502 at the University of Florida.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #faf9f7;
-    --bg-alt: #ffffff;
-    --bg-inset: #f1efec;
-    --ink: #1a1a18;
-    --ink-2: #55524c;
-    --ink-3: #8a867e;
-    --line: #e0ddd7;
-    --line-strong: #c9c5bd;
-    --accent: #1f6f43;
-    --accent-ink: #ffffff;
+    --color-bg: #fafafa;
+    --color-surface: #ffffff;
+    --color-text: #1a1a1a;
+    --color-text-muted: #4b5563;
+    --color-border: #e0e0e0;
+    --color-primary: #10b981;
+    --color-primary-hover: #059666;
+    --color-primary-depth: #047852;
+    --color-bg-alt: #f0f2f5;
+    --color-secondary-depth: #d1d5db;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+    --radius: 8px;
+    --radius-sm: 4px;
+    --transition: 150ms ease;
     --canvas-wall: #262622;
     --canvas-edge: #4d4a42;
     --canvas-floor: #dcd7cd;
     --canvas-open: #efece6;
-    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', Consolas, monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #131311;
-      --bg-alt: #1a1a18;
-      --bg-inset: #202020;
-      --ink: #ecebe7;
-      --ink-2: #a8a49c;
-      --ink-3: #767268;
-      --line: #2b2b28;
-      --line-strong: #3d3c38;
-      --accent: #4fae78;
-      --accent-ink: #10130f;
+      --color-bg: #111114;
+      --color-surface: #1c1c20;
+      --color-text: #e8e8ec;
+      --color-text-muted: #b4b4b8;
+      --color-border: #333338;
+      --color-primary: #10b981;
+      --color-primary-hover: #34d39e;
+      --color-bg-alt: #18181c;
+      --color-secondary-depth: #000000;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+      --shadow-md: 0 4px 8px rgba(0,0,0,0.5);
       --canvas-wall: #0e0e0d;
       --canvas-edge: #33322d;
       --canvas-floor: #57534a;
@@ -46,202 +56,199 @@
 
   html { scroll-behavior: smooth; }
 
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--ink);
+    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--color-text);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
 
-  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 
-  a { color: var(--accent); }
+  a { color: var(--color-primary); }
 
-  /* header */
+  /* sticky solid header */
   header {
-    border-bottom: 1px solid var(--line);
-    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
   }
   .nav {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 10px 24px;
-    padding: 20px 24px;
-    max-width: 960px;
+    padding: 14px 24px;
+    max-width: 1080px;
     margin: 0 auto;
   }
   .nav-title {
-    font-family: var(--mono);
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    letter-spacing: -0.01em;
     display: flex;
     align-items: center;
     gap: 10px;
   }
-  .nav-title img { width: 18px; height: auto; image-rendering: pixelated; align-self: center; }
-  .nav-links { display: flex; flex-wrap: wrap; gap: 20px; }
+  .nav-title img { width: 18px; height: auto; image-rendering: pixelated; }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 22px; }
   .nav-links a {
-    color: var(--ink-2);
+    color: var(--color-text-muted);
     text-decoration: none;
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    transition: color 0.15s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color var(--transition);
   }
-  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover { color: var(--color-text); }
 
   /* hero */
-  .hero { padding: 88px 0 64px; border-bottom: 1px solid var(--line); }
-  .hero-kicker {
-    font-family: var(--mono);
+  .hero { padding: 80px 0 72px; }
+  .section-label {
     font-size: 0.78rem;
-    letter-spacing: 0.14em;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 22px;
+    color: var(--color-primary);
+    margin-bottom: 14px;
   }
   .hero h1 {
-    font-size: clamp(2.4rem, 6vw, 4rem);
-    line-height: 1.06;
-    letter-spacing: -0.025em;
-    font-weight: 750;
-    max-width: 15ch;
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    max-width: 18ch;
   }
   .hero p.tagline {
-    margin-top: 26px;
+    margin-top: 22px;
     max-width: 58ch;
-    color: var(--ink-2);
+    color: var(--color-text-muted);
     font-size: 1.08rem;
   }
   .meta-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 0;
-    margin-top: 36px;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    gap: 8px;
+    margin-top: 30px;
   }
-  .meta-item {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.04em;
-    color: var(--ink-2);
-    padding: 10px 18px 10px 0;
-    margin-right: 18px;
-    border-right: 1px solid var(--line);
+  .tag {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    background: rgba(16,185,129,0.12);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
   }
-  .meta-item:last-child { border-right: none; margin-right: 0; }
-  .hero-actions { display: flex; gap: 12px; margin-top: 36px; flex-wrap: wrap; }
+  .hero-actions { display: flex; gap: 14px; margin-top: 36px; flex-wrap: wrap; }
   .btn {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    padding: 11px 20px;
-    border-radius: 4px;
+    padding: 0.65rem 1.25rem;
+    border-radius: var(--radius);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-family: var(--font-sans);
+    font-size: 0.92rem;
     font-weight: 600;
     border: 1px solid transparent;
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     cursor: pointer;
+    transition: transform 0.08s ease, background-color var(--transition);
   }
   .btn svg { width: 16px; height: 16px; fill: currentColor; }
-  .btn-primary { background: var(--accent); color: var(--accent-ink); }
-  .btn-primary:hover { filter: brightness(1.08); }
-  .btn-outline {
-    background: transparent;
-    border-color: var(--line-strong);
-    color: var(--ink);
+  .btn-primary {
+    background: var(--color-primary);
+    color: #ffffff;
+    box-shadow: 0 3px 0 0 var(--color-primary-depth);
   }
-  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary:hover { background: var(--color-primary-hover); }
+  .btn-primary:active { transform: translateY(2px); box-shadow: 0 1px 0 0 var(--color-primary-depth); }
+  .btn-secondary {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+    box-shadow: 0 3px 0 0 var(--color-secondary-depth);
+  }
+  .btn-secondary:hover { border-color: var(--color-primary); color: var(--color-primary); }
+  .btn-secondary:active { transform: translateY(2px); box-shadow: 0 1px 0 0 var(--color-secondary-depth); }
 
   /* sections */
-  section { padding: 64px 0; border-bottom: 1px solid var(--line); }
-  section:last-of-type { border-bottom: none; }
-  .section-head {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-  .section-num {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    color: var(--ink-3);
-    letter-spacing: 0.08em;
-  }
+  section { padding: 40px 0; }
+  main > section + section { margin-top: 2rem; }
+  .section-head { margin-bottom: 26px; }
   h2 {
-    font-size: 1.65rem;
+    font-size: 1.6rem;
     letter-spacing: -0.02em;
     font-weight: 700;
   }
-  .prose { max-width: 66ch; color: var(--ink-2); }
+  .prose { max-width: 66ch; color: var(--color-text-muted); }
   .prose p + p { margin-top: 14px; }
-  .prose strong { color: var(--ink); font-weight: 600; }
+  .prose strong { color: var(--color-text); font-weight: 600; }
+
+  /* card base */
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition), transform var(--transition);
+  }
+  .card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 
   /* banner figure */
   .banner-fig {
     margin-top: 44px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
     overflow: hidden;
-    background: #ffffff;
     max-width: 620px;
   }
   .banner-fig img { display: block; width: 100%; height: auto; }
 
-  /* feature table */
-  .feature-list { border-top: 1px solid var(--line); }
-  .feature-row {
+  /* feature cards */
+  .feature-grid {
     display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 24px;
-    padding: 20px 0;
-    border-bottom: 1px solid var(--line);
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
   }
-  .feature-row h3 { font-size: 0.95rem; font-weight: 650; letter-spacing: -0.01em; }
-  .feature-row p { color: var(--ink-2); font-size: 0.95rem; }
-  @media (max-width: 620px) {
-    .feature-row { grid-template-columns: 1fr; gap: 6px; }
-  }
+  .feature-card { padding: 1.5rem; }
+  .feature-card h3 { font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 8px; }
+  .feature-card p { color: var(--color-text-muted); font-size: 0.95rem; }
 
   /* wfc demo */
-  .wfc-panel {
-    border: 1px solid var(--line-strong);
-    border-radius: 6px;
-    background: var(--bg-alt);
-    overflow: hidden;
-  }
+  .wfc-panel { overflow: hidden; }
+  .wfc-panel:hover { transform: none; }
   .wfc-toolbar {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 14px 22px;
     padding: 14px 18px;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--color-border);
   }
   .wfc-toolbar label {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--ink-2);
+    color: var(--color-text-muted);
     display: flex;
     align-items: center;
     gap: 10px;
   }
-  .wfc-toolbar input[type="range"] { accent-color: var(--accent); width: 130px; }
+  .wfc-toolbar input[type="range"] { accent-color: var(--color-primary); width: 130px; }
   .wfc-status {
     margin-left: auto;
-    font-family: var(--mono);
+    font-family: var(--font-mono);
     font-size: 0.75rem;
-    color: var(--ink-3);
+    color: var(--color-text-muted);
     letter-spacing: 0.04em;
   }
   #wfc-canvas {
@@ -257,23 +264,23 @@
     flex-wrap: wrap;
     gap: 10px 24px;
     padding: 12px 18px;
-    border-top: 1px solid var(--line);
-    font-family: var(--mono);
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-mono);
     font-size: 0.75rem;
-    color: var(--ink-2);
+    color: var(--color-text-muted);
     letter-spacing: 0.04em;
   }
   .wfc-legend span { display: inline-flex; align-items: center; gap: 8px; }
   .swatch {
     width: 12px; height: 12px;
-    border: 1px solid var(--line-strong);
+    border: 1px solid var(--color-border);
     border-radius: 2px;
     display: inline-block;
   }
   .wfc-note {
     margin-top: 14px;
     font-size: 0.88rem;
-    color: var(--ink-3);
+    color: var(--color-text-muted);
     max-width: 70ch;
   }
 
@@ -283,12 +290,7 @@
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
   }
-  figure.shot {
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    overflow: hidden;
-    background: var(--bg-alt);
-  }
+  figure.shot { overflow: hidden; }
   figure.shot img {
     width: 100%;
     height: auto;
@@ -298,11 +300,10 @@
   }
   figure.shot figcaption {
     padding: 10px 14px;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.04em;
-    color: var(--ink-2);
-    border-top: 1px solid var(--line);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    border-top: 1px solid var(--color-border);
   }
 
   /* sprite strip */
@@ -313,17 +314,16 @@
     justify-content: space-between;
     gap: 28px;
     padding: 34px 28px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: var(--bg-inset);
+    background: var(--color-bg-alt);
   }
+  .sprite-strip:hover { transform: none; }
   .sprite { display: flex; flex-direction: column; align-items: center; gap: 12px; }
   .sprite img { image-rendering: pixelated; height: 72px; width: auto; }
   .sprite img.small { height: 48px; }
   .sprite span {
-    font-family: var(--mono);
     font-size: 0.68rem;
-    color: var(--ink-3);
+    font-weight: 600;
+    color: var(--color-text-muted);
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -347,14 +347,16 @@
     25% { opacity: 0; }
     100% { opacity: 0; }
   }
+  @media (prefers-reduced-motion: reduce) {
+    .jason-anim img { animation: none; }
+    .jason-anim img:first-child { opacity: 1; }
+  }
 
   /* video */
   .video-thumb {
     position: relative;
     display: block;
     max-width: 680px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
     overflow: hidden;
   }
   .video-thumb img { width: 100%; display: block; }
@@ -368,68 +370,68 @@
   .play-badge {
     width: 60px;
     height: 60px;
-    border-radius: 8px;
-    background: var(--accent);
+    border-radius: var(--radius);
+    background: var(--color-primary);
+    box-shadow: 0 3px 0 0 var(--color-primary-depth);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: filter 0.15s ease;
+    transition: background-color var(--transition);
   }
-  .video-thumb:hover .play-badge { filter: brightness(1.1); }
-  .play-badge svg { width: 24px; height: 24px; fill: var(--accent-ink); margin-left: 3px; }
+  .video-thumb:hover .play-badge { background: var(--color-primary-hover); }
+  .play-badge svg { width: 24px; height: 24px; fill: #ffffff; margin-left: 3px; }
 
   /* code block */
   .code {
-    background: var(--bg-inset);
-    border: 1px solid var(--line);
-    border-radius: 6px;
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
     padding: 18px 20px;
-    font-family: var(--mono);
+    font-family: var(--font-mono);
     font-size: 0.85rem;
-    color: var(--ink);
+    color: var(--color-text);
     overflow-x: auto;
     line-height: 1.9;
     max-width: 680px;
   }
-  .code .c { color: var(--ink-3); }
+  .code .c { color: var(--color-text-muted); }
 
   /* team */
   .team-list {
-    border-top: 1px solid var(--line);
-    max-width: 560px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    max-width: 720px;
   }
   .team-list a {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 14px 4px;
-    border-bottom: 1px solid var(--line);
+    flex-direction: column;
+    gap: 2px;
+    padding: 1.25rem;
     text-decoration: none;
-    color: var(--ink);
+    color: var(--color-text);
     font-size: 0.95rem;
-    font-weight: 550;
-    transition: color 0.15s ease;
+    font-weight: 600;
   }
-  .team-list a:hover { color: var(--accent); }
+  .team-list a:hover { color: var(--color-primary); }
   .team-list a .gh {
-    font-family: var(--mono);
+    font-family: var(--font-mono);
     font-size: 0.75rem;
-    color: var(--ink-3);
+    font-weight: 400;
+    color: var(--color-text-muted);
     letter-spacing: 0.03em;
   }
-  .team-list a:hover .gh { color: var(--accent); }
+  .team-list a:hover .gh { color: var(--color-primary); }
 
   footer {
-    border-top: 1px solid var(--line);
-    padding: 36px 0 52px;
-    color: var(--ink-3);
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.04em;
+    border-top: 1px solid var(--color-border);
+    margin-top: 3rem;
+    padding: 32px 0 48px;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
   }
-  footer a { color: var(--ink-2); text-decoration: none; }
-  footer a:hover { color: var(--accent); }
+  footer a { color: var(--color-text-muted); text-decoration: none; }
+  footer a:hover { color: var(--color-primary); }
 </style>
 </head>
 <body>
@@ -454,33 +456,33 @@
 <main class="container">
 
   <section class="hero">
-    <div class="hero-kicker">Roguelike / Pygame / MAD2502 Capstone</div>
+    <div class="section-label">Roguelike / Pygame / MAD2502 Capstone</div>
     <h1>A roguelike climb up Century Tower</h1>
     <p class="tagline">A dungeon crawler built with Pygame, inspired by professor Jason Harrington's love for mathematics and developed with his support as the Capstone Project for MAD2502 at the University of Florida.</p>
     <div class="meta-row">
-      <span class="meta-item">Python</span>
-      <span class="meta-item">Pygame</span>
-      <span class="meta-item">PyWFC</span>
-      <span class="meta-item">Game development</span>
-      <span class="meta-item">MAD2502 / 2023</span>
+      <span class="tag">Python</span>
+      <span class="tag">Pygame</span>
+      <span class="tag">PyWFC</span>
+      <span class="tag">Game development</span>
+      <span class="tag">MAD2502 / 2023</span>
     </div>
     <div class="hero-actions">
       <a class="btn btn-primary" href="https://github.com/matheusmaldaner/JasonJourney">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
         View on GitHub
       </a>
-      <a class="btn btn-outline" href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s">
+      <a class="btn btn-secondary" href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
         Watch the demo
       </a>
     </div>
-    <figure class="banner-fig">
+    <figure class="banner-fig card">
       <img src="assets/banner.svg" alt="Jason's Journey banner">
     </figure>
   </section>
 
   <section id="about">
-    <div class="section-head"><span class="section-num">01</span><h2>The Ultimate Equation awaits</h2></div>
+    <div class="section-head"><div class="section-label">About</div><h2>The Ultimate Equation awaits</h2></div>
     <div class="prose">
       <p><strong>Jason's Journey</strong> is a roguelike game built in Pygame where you play as professor Jason Harrington, exploring the procedurally generated levels of Century Tower. Your mission: battle enemies, conquer boss fights, and solve the <strong>Ultimate Equation</strong> to unlock all knowledge in the universe.</p>
       <p>The project was developed in 2023 as the Capstone Project for MAD2502 (Computational Mathematics) at the University of Florida, with professor Harrington's support. Level layouts are generated with <strong>PyWFC</strong>, a wave function collapse library, so every climb through the tower is different.</p>
@@ -488,11 +490,11 @@
   </section>
 
   <section id="wfc">
-    <div class="section-head"><span class="section-num">02</span><h2>Try the level generator</h2></div>
+    <div class="section-head"><div class="section-label">Interactive demo</div><h2>Try the level generator</h2></div>
     <div class="prose" style="margin-bottom: 22px;">
       <p>The game's tower floors are laid out with wave function collapse: every tile starts as a superposition of possibilities, and the map "collapses" one lowest-entropy tile at a time while constraints propagate to its neighbors. This is an interactive demo of the technique, a simplified in-browser cousin of the PyWFC pipeline used in the game.</p>
     </div>
-    <div class="wfc-panel">
+    <div class="wfc-panel card">
       <div class="wfc-toolbar">
         <button class="btn btn-primary" id="wfc-generate" type="button">Generate</button>
         <label for="wfc-speed">Speed
@@ -512,21 +514,21 @@
   </section>
 
   <section id="features">
-    <div class="section-head"><span class="section-num">03</span><h2>What is inside the tower</h2></div>
-    <div class="feature-list">
-      <div class="feature-row">
+    <div class="section-head"><div class="section-label">Features</div><h2>What is inside the tower</h2></div>
+    <div class="feature-grid">
+      <div class="feature-card card">
         <h3>Procedural levels</h3>
         <p>Tower floors are generated with wave function collapse via PyWFC, layered on top of handcrafted CSV tile maps.</p>
       </div>
-      <div class="feature-row">
+      <div class="feature-card card">
         <h3>Combat and bosses</h3>
         <p>Fight goblins, imps, skeletons, and zombies with an arsenal ranging from a bow to lightsabers, and take on boss fights.</p>
       </div>
-      <div class="feature-row">
+      <div class="feature-card card">
         <h3>Story cutscenes</h3>
         <p>Illustrated cutscenes carry the story of a professor's quest for the Ultimate Equation across the UF campus.</p>
       </div>
-      <div class="feature-row">
+      <div class="feature-card card">
         <h3>Pixel art and audio</h3>
         <p>Animated sprite characters, retro fonts, and sound effects for coins, arrows, and healing round out the experience.</p>
       </div>
@@ -534,8 +536,8 @@
   </section>
 
   <section>
-    <div class="section-head"><span class="section-num">04</span><h2>Sprites from the game</h2></div>
-    <div class="sprite-strip">
+    <div class="section-head"><div class="section-label">Pixel art</div><h2>Sprites from the game</h2></div>
+    <div class="sprite-strip card">
       <div class="sprite">
         <div class="jason-anim">
           <img src="assets/sprites/jason_idle_0.png" alt="Jason idle animation frame">
@@ -558,29 +560,29 @@
   </section>
 
   <section id="gallery">
-    <div class="section-head"><span class="section-num">05</span><h2>Cutscene art</h2></div>
+    <div class="section-head"><div class="section-label">Gallery</div><h2>Cutscene art</h2></div>
     <div class="gallery">
-      <figure class="shot">
+      <figure class="shot card">
         <img src="assets/game_intro.jpg" alt="Game intro cutscene art" loading="lazy">
         <figcaption>The journey begins</figcaption>
       </figure>
-      <figure class="shot">
+      <figure class="shot card">
         <img src="assets/uf_scenery.jpg" alt="UF campus scenery cutscene art" loading="lazy">
         <figcaption>The University of Florida campus</figcaption>
       </figure>
-      <figure class="shot">
+      <figure class="shot card">
         <img src="assets/facing_tower.jpg" alt="Facing Century Tower cutscene art" loading="lazy">
         <figcaption>Facing Century Tower</figcaption>
       </figure>
-      <figure class="shot">
+      <figure class="shot card">
         <img src="assets/at_desk.jpg" alt="Professor at desk cutscene art" loading="lazy">
         <figcaption>At the professor's desk</figcaption>
       </figure>
-      <figure class="shot">
+      <figure class="shot card">
         <img src="assets/reaching_power.jpg" alt="Reaching power cutscene art" loading="lazy">
         <figcaption>Reaching for the Ultimate Equation</figcaption>
       </figure>
-      <figure class="shot">
+      <figure class="shot card">
         <img src="assets/the_end.jpg" alt="Ending cutscene art" loading="lazy">
         <figcaption>The end of the climb</figcaption>
       </figure>
@@ -588,15 +590,15 @@
   </section>
 
   <section id="demo">
-    <div class="section-head"><span class="section-num">06</span><h2>Watch it in action</h2></div>
-    <a class="video-thumb" href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s" aria-label="Watch the demo video on YouTube">
+    <div class="section-head"><div class="section-label">Video</div><h2>Watch it in action</h2></div>
+    <a class="video-thumb card" href="https://www.youtube.com/watch?v=pitanN35QZ0&t=714s" aria-label="Watch the demo video on YouTube">
       <img src="https://img.youtube.com/vi/pitanN35QZ0/maxresdefault.jpg" alt="Demo video thumbnail" loading="lazy">
       <span class="play"><span class="play-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></span>
     </a>
   </section>
 
   <section id="run">
-    <div class="section-head"><span class="section-num">07</span><h2>Play locally</h2></div>
+    <div class="section-head"><div class="section-label">Quick start</div><h2>Play locally</h2></div>
     <div class="prose" style="margin-bottom: 18px;">
       <p>The game runs on Python 3.10 with Pygame. Install the dependencies, clone the repository, and start the game.</p>
     </div>
@@ -611,12 +613,12 @@
   </section>
 
   <section id="team">
-    <div class="section-head"><span class="section-num">08</span><h2>Built by</h2></div>
+    <div class="section-head"><div class="section-label">Team</div><h2>Built by</h2></div>
     <div class="team-list">
-      <a href="https://github.com/matheusmaldaner"><span>Matheus Kunzler Maldaner</span><span class="gh">@matheusmaldaner</span></a>
-      <a href="https://github.com/kylwein"><span>Kyle Weiner</span><span class="gh">@kylwein</span></a>
-      <a href="https://github.com/gabriellasprague"><span>Gabi Sprague</span><span class="gh">@gabriellasprague</span></a>
-      <a href="https://github.com/victoriamanzato"><span>Victoria Manzato</span><span class="gh">@victoriamanzato</span></a>
+      <a class="card" href="https://github.com/matheusmaldaner"><span>Matheus Kunzler Maldaner</span><span class="gh">@matheusmaldaner</span></a>
+      <a class="card" href="https://github.com/kylwein"><span>Kyle Weiner</span><span class="gh">@kylwein</span></a>
+      <a class="card" href="https://github.com/gabriellasprague"><span>Gabi Sprague</span><span class="gh">@gabriellasprague</span></a>
+      <a class="card" href="https://github.com/victoriamanzato"><span>Victoria Manzato</span><span class="gh">@victoriamanzato</span></a>
     </div>
   </section>
 
@@ -666,7 +668,7 @@
     palette = {
       open: cssVar("--canvas-open"),
       colors: [cssVar("--canvas-wall"), cssVar("--canvas-edge"), cssVar("--canvas-floor")],
-      accent: cssVar("--accent")
+      accent: cssVar("--color-primary")
     };
     document.getElementById("sw-wall").style.background = palette.colors[WALL];
     document.getElementById("sw-edge").style.background = palette.colors[EDGE];
